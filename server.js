@@ -38,11 +38,13 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 
 // To load dotenv configuration
 dotenv.config()
 const app = express()
 app.use(express.json());
+app.use(cors());
 
 //
 app.get('/home',(req,res) =>{
@@ -95,16 +97,16 @@ app.delete('/:id',async (req,res) =>{
 })
 
 //Update User by id 
-app.put('/', async (req,res) =>{
+app.put('/:id', async (req,res) =>{
     try {
         const user = await User.findByIdAndUpdate(
             req.params.id,
-            req.params.body,
+            req.body,
             {new:true}
         );
-        response.status(201).json(user)
+        res.status(200).json(user)
     } catch (error) {
-        console.log(error)
+        res.status(400).json({error:error.message})
     }
 })
 
