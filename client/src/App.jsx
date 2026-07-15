@@ -3,9 +3,9 @@ import axios from 'axios';
 import { Plus, Edit2, Trash2, Users, Mail, FileText, User as UserIcon } from 'lucide-react';
 import './index.css';
 
-const API_URL = 'http://localhost:3000';
+const API_URL = '/api/users';
 
-function App() {
+const App = () => {
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -23,7 +23,7 @@ function App() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${API_URL}/`);
+      const response = await axios.get(API_URL);
       setUsers(response.data);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -61,7 +61,7 @@ function App() {
       if (editingUser) {
         await axios.put(`${API_URL}/${editingUser._id}`, formData);
       } else {
-        await axios.post(`${API_URL}/`, formData);
+        await axios.post(API_URL, formData);
       }
       closeModal();
       fetchUsers();
@@ -85,14 +85,14 @@ function App() {
   return (
     <div className="app-container">
       <header className="header">
-        <h1>User Management</h1>
+        <h1>User Management System</h1>
         <button className="btn btn-primary" onClick={() => openModal()}>
           <Plus size={20} />
           Add User
         </button>
       </header>
 
-      {users.length === 0 ? (
+      {!Array.isArray(users) || users.length === 0 ? (
         <div className="empty-state glass-panel">
           <Users />
           <h2>No users found</h2>

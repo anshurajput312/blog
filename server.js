@@ -39,6 +39,11 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // To load dotenv configuration
 dotenv.config()
@@ -69,7 +74,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User",userSchema);
 //create insert User API
-app.post('/',async (req,res) =>{
+app.post('/api/users',async (req,res) =>{
     //To handle the error using try catch
     try {
         const user = await User.create(req.body)
@@ -80,14 +85,14 @@ app.post('/',async (req,res) =>{
     }    
 })
 //Read the user form mongoDB
-app.get('/',async (req,res) => {
+app.get('/api/users',async (req,res) => {
     const user = await User.find();
     res.status(200).json(user)
 
 })
 
 //Delete User by id 
-app.delete('/:id',async (req,res) =>{
+app.delete('/api/users/:id',async (req,res) =>{
     try{
         const user = await User.findByIdAndDelete(req.params.id)
         res.status(200).json(user)
@@ -97,7 +102,7 @@ app.delete('/:id',async (req,res) =>{
 })
 
 //Update User by id 
-app.put('/:id', async (req,res) =>{
+app.put('/api/users/:id', async (req,res) =>{
     try {
         const user = await User.findByIdAndUpdate(
             req.params.id,
@@ -109,6 +114,13 @@ app.put('/:id', async (req,res) =>{
         res.status(400).json({error:error.message})
     }
 })
+
+// Serve static frontend files
+app.use(express.static(path.join(__dirname, 'client', 'dist')));
+
+app.get(/(.*)/, (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+});
 
 
 
